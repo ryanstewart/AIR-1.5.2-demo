@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication 
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/halo"
+	keyDown="windowedapplication1_keyDownHandler(event)"
+	creationComplete="windowedapplication1_creationCompleteHandler(event)">
+
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			import flash.filesystem.FileMode;
+			import flash.filesystem.FileStream;
+			import flash.filesystem.File;
+			
+			public var xml:XML;
+			
+			protected function btn_fullScreen_clickHandler(event:MouseEvent):void
+			{
+				stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
+				btn_fullScreen.label = "Try pushing escape!"
+					
+			}
+
+			protected function windowedapplication1_keyDownHandler(event:KeyboardEvent):void
+			{
+				event.preventDefault();
+				if( event.keyCode == Keyboard.ESCAPE )
+				{
+					btn_fullScreen.label = "Nope, escape won't work. Try pushing the Enter Key";
+				}
+				if( event.keyCode == Keyboard.ENTER )
+				{
+					stage.displayState = StageDisplayState.NORMAL;
+					btn_fullScreen.label = "Go Full Screen!";
+				} 
+			}
+
+
+			protected function btn_loadXML_clickHandler(event:MouseEvent):void
+			{
+				xml.normalize();
+				var xmlList:XMLList = xml.children();
+				var text:XMLList = xml.text();
+				var xmlStr:String = xml.toString();
+			}
+
+
+			protected function btn_disposeXML_clickHandler(event:MouseEvent):void
+			{
+				System.disposeXML( xml );
+				xml = null;
+			}
+
+
+			protected function windowedapplication1_creationCompleteHandler(event:FlexEvent):void
+			{
+				var file:File = File.applicationDirectory.resolvePath("assets/Untitled.gpx");
+				var stream:FileStream = new FileStream();
+					stream.open(file,FileMode.READ);
+				var str:String = stream.readUTFBytes(file.size);
+					stream.close();	
+				xml = new XML(str);			
+			}
+
+		]]>
+	</fx:Script>
+	<s:Button id="btn_fullScreen" label="Go Full Screen!" click="btn_fullScreen_clickHandler(event)" />
+	<s:Button id="btn_loadXML" label="Load XML" click="btn_loadXML_clickHandler(event)" y="25" />
+	<s:Button id="btn_disposeXML" label="Dispose XML" click="btn_disposeXML_clickHandler(event)" y="25" x="150" />
+</s:WindowedApplication>
